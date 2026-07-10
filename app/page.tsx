@@ -1,42 +1,16 @@
-'use client'
+import Link from "next/link"
 
-import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-
-export default function Dashboard() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession() // FIXED: added }
-      if (!session) {
-        router.push('/')
-      } else {
-        setLoading(false)
-      }
-    }
-    checkUser()
-  }, [router])
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/'
-  }
-
-  if (loading) return <p>Loading...</p>
-
+export default function Home() {
   return (
-    <div style={{ padding: '40px', textAlign: 'center' }}>
-      <h1>Welcome to Bossttribe Dashboard</h1>
-      <p>You are logged in ✅</p>
-      <button
-        onClick={handleLogout}
-        style={{background: 'red', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px'}}
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <h1 className="text-4xl font-bold mb-4">BossTribe</h1>
+      <p className="mb-8">Welcome to BossTribe</p>
+      <Link 
+        href="/dashboard" 
+        className="bg-black text-white px-6 py-3 rounded-lg"
       >
-        Logout
-      </button>
-    </div>
+        Go to Dashboard
+      </Link>
+    </main>
   )
 }
