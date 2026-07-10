@@ -1,34 +1,49 @@
 'use client'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export default function Dashboard() {
   const router = useRouter()
-  const supabase = createClientComponentClient()
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      console.log('Logout error:', error)
-      alert('Logout failed: ' + error.message)
-    } else {
-      router.push('/')
-      router.refresh()
-    }
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-12 bg-gray-50">
-      <h1 className="text-3xl font-bold text-gray-900">Bossttribe Dashboard</h1>
-      <p className="mt-4 text-lg text-gray-600">You are logged in 🚀</p>
+    <div style={{
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh',
+      gap: '20px'
+    }}>
+      <h1>Welcome to Bossttribe Dashboard</h1>
+      <p>You are logged in ✅</p>
       
       <button 
         onClick={handleLogout}
-        className="mt-8 px-6 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600"
+        style={{
+          backgroundColor: '#ef4444',
+          color: 'white',
+          padding: '12px 24px',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '16px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}
       >
         Logout
       </button>
-    </main>
+    </div>
   )
 }
