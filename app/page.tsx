@@ -2,6 +2,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,36 +11,42 @@ const supabase = createClient(
 
 export default function Dashboard() {
   const router = useRouter()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/')
+      } else {
+        setLoading(false)
+      }
+    }
+    checkUser()
+  }, [router])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+    router.push('/') // send to home
+    router.refresh() // clear cache
   }
 
+  if (loading) return <p>Loading...</p>
+
   return (
-    <div style={{
-      display: 'flex', 
-      flexDirection: 'column', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      gap: '20px'
-    }}>
+    <div style={{ padding: '40px', textAlign: 'center' }}>
       <h1>Welcome to Bossttribe Dashboard</h1>
       <p>You are logged in ✅</p>
-      
-      <button 
+      <button
         onClick={handleLogout}
         style={{
-          backgroundColor: '#ef4444',
+          background: 'red',
           color: 'white',
-          padding: '12px 24px',
+          padding: '10px 20px',
           border: 'none',
-          borderRadius: '8px',
-          fontSize: '16px',
-          fontWeight: '600',
-          cursor: 'pointer'
+          borderRadius: '5px',
+          cursor: 'pointer',
+          marginTop: '20px'
         }}
       >
         Logout
