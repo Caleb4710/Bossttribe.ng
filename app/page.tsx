@@ -1,16 +1,28 @@
-import Link from "next/link"
+"use client"
+import { createClient } from "@/utils/supabase/client"
+import { useRouter } from "next/navigation"
 
-export default function Home() {
+export default function DashboardPage() {
+  const supabase = createClient()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push("/")
+    router.refresh()
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold mb-4">BossTribe</h1>
-      <p className="mb-8">Welcome to BossTribe</p>
-      <Link 
-        href="/dashboard" 
-        className="bg-black text-white px-6 py-3 rounded-lg"
+    <div className="p-10 text-center">
+      <h1 className="text-3xl font-bold">Bossttribe Dashboard</h1>
+      <p className="mt-4">This is where the magic happens 🚀</p>
+      
+      <button 
+        onClick={handleLogout}
+        className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold"
       >
-        Go to Dashboard
-      </Link>
-    </main>
+        Logout
+      </button>
+    </div>
   )
 }
