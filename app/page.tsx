@@ -10,9 +10,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) router.push('/')
-      else setLoading(false)
+      const { data: { session } } = await supabase.auth.getSession() // FIXED: added }
+      if (!session) {
+        router.push('/')
+      } else {
+        setLoading(false)
+      }
     }
     checkUser()
   }, [router])
@@ -28,7 +31,10 @@ export default function Dashboard() {
     <div style={{ padding: '40px', textAlign: 'center' }}>
       <h1>Welcome to Bossttribe Dashboard</h1>
       <p>You are logged in ✅</p>
-      <button onClick={handleLogout} style={{background: 'red', color: 'white', padding: '10px 20px'}}>
+      <button
+        onClick={handleLogout}
+        style={{background: 'red', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px'}}
+      >
         Logout
       </button>
     </div>
