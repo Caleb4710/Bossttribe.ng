@@ -1,15 +1,11 @@
 'use client'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-
-const supabaseUrl = 'https://muntmcbxqaarvkaucdwu.supabase.co'
-const supabaseAnonKey = 'sb_publishable_8Wu5QaOl1k4Mp8IyghVhtw_vubHT93v'
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export default function Dashboard() {
   const router = useRouter()
+  const supabase = createClientComponentClient()
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
@@ -18,6 +14,7 @@ export default function Dashboard() {
       alert('Logout failed: ' + error.message)
     } else {
       router.push('/')
+      router.refresh() // this forces the page to update
     }
   }
 
