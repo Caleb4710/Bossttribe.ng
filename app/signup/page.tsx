@@ -1,19 +1,83 @@
+'use client'
+import { useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
 export default function Signup() {
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const handleSignup = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: 'https://bossttribe-ng.vercel.app/dashboard'
+      }
+    })
+
+    setLoading(false)
+
+    if (error) {
+      alert(error.message)
+    } else {
+      alert('Account created! Check your email to confirm.')
+      router.push('/login')
+    }
+  }
+
   return (
-    <main style={{fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#f9f9f9'}}>
-      <h1 style={{fontSize: '36px', marginBottom: '10px'}}>Join Bossttribe 🚀</h1>
-      <p style={{color: '#666', marginBottom: '30px'}}>Start growing your business today</p>
-      
-      <form style={{display: 'flex', flexDirection: 'column', gap: '15px', width: '300px'}}>
-        <input type="text" placeholder="Full Name" style={{padding: '12px', borderRadius: '8px', border: '1px solid #ddd'}}/>
-        <input type="email" placeholder="Email" style={{padding: '12px', borderRadius: '8px', border: '1px solid #ddd'}}/>
-        <input type="password" placeholder="Password" style={{padding: '12px', borderRadius: '8px', border: '1px solid #ddd'}}/>
-        <button type="button" style={{padding: '12px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold'}}>
-          Create Account
+    <div className="flex min-h-screen items-center justify-center">
+      <form onSubmit={handleSignup} className="w-96 space-y-4 p-6 border rounded">
+        <h1 className="text-2xl font-bold">Start growing your business today</h1>
+        
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+        
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+        
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+        
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full bg-black text-white p-2 rounded"
+        >
+          {loading ? 'Creating...' : 'Create Account'}
         </button>
       </form>
-
-      <a href="/" style={{marginTop: '20px', color: '#000'}}>← Back Home</a>
-    </main>
+    </div>
   )
 }
