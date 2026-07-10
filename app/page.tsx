@@ -14,7 +14,7 @@ export default function Dashboard() {
       alert('Logout failed: ' + error.message)
     } else {
       router.push('/')
-      router.refresh() // this forces the page to update
+      router.refresh()
     }
   }
 
